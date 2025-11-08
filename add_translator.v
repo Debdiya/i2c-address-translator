@@ -8,7 +8,6 @@ module i2c_address_translator (
     inout  wire scl,
     inout  wire sda,
 
-  
   output wire [6:0] translated_addr,
     output wire [6:0] captured_addr_o,
     output wire       translate_hit,
@@ -18,7 +17,6 @@ module i2c_address_translator (
 reg scl_driver = 1'b0, sda_driver = 1'b0;
 assign scl = (scl_driver) ? 1'b0 : 1'bz;
 assign sda = (sda_driver) ? 1'b0 : 1'bz;
-
  (* KEEP = "TRUE" *) reg scl_clk1, scl_clk2, sda_clk1, sda_clk2;
 
 always @(posedge clk) begin
@@ -31,8 +29,7 @@ wire scl_down = (scl_clk2 == 1'b1) && (scl_clk1 == 1'b0);
 wire starting = (sda_clk2 == 1'b1) && (sda_clk1 == 1'b0) && (scl_clk1 == 1'b1);
 wire stopping  = (sda_clk2 == 1'b0) && (sda_clk1 == 1'b1) && (scl_clk1 == 1'b1);
 
-
-  localparam idle=3'b000, start=3'b001, address=3'b010, translate=3'b011, transfer=3'b100;
+ localparam idle=3'b000, start=3'b001, address=3'b010, translate=3'b011, transfer=3'b100;
   (* KEEP = "TRUE" *) reg [2:0] current_state, next_state;
 
   (* KEEP = "TRUE" *) reg [2:0] bitcount;          
@@ -72,7 +69,6 @@ always @* begin
   endcase
 end
 
-
 always @(posedge clk or posedge reset) begin
   if (reset) begin
     bitcount <= 3'd0;
@@ -82,7 +78,6 @@ always @(posedge clk or posedge reset) begin
     bitcount <= bitcount + 3'd1;
   end
 end
-
 
 reg got_rw;
 always @(posedge clk or posedge reset) begin
@@ -99,7 +94,6 @@ always @(posedge clk or posedge reset) begin
     end
   end
 end
-
 
 always @* begin
   forward_address = captured_address;
