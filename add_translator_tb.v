@@ -1,25 +1,18 @@
 `timescale 1ns/1ps
 
 module tb_i2c_address_translator;
-
-  
-  reg clk = 0;
+reg clk = 0;
   reg reset = 1;
   reg enable = 1;
-
-  
-  wire scl, sda;
+ wire scl, sda;
   pullup (scl);
   pullup (sda);
-
-  
-  reg mst_scl_drive = 0;  
+reg mst_scl_drive = 0;  
   reg mst_sda_drive = 0;  
 
   assign scl = (mst_scl_drive) ? 1'b0 : 1'bz;
   assign sda = (mst_sda_drive) ? 1'b0 : 1'bz;
 
-  // DUT
   i2c_address_translator dut (
     .clk   (clk),
     .reset (reset),
@@ -28,10 +21,8 @@ module tb_i2c_address_translator;
     .sda   (sda)
   );
 
-  
   always #5 clk = ~clk;
 
-  
   task i2c_idle;
     begin
       
@@ -98,59 +89,34 @@ module tb_i2c_address_translator;
       
       for (i = 6; i >= 0; i = i - 1)
         i2c_send_bit(addr[i]);
-
-     
-      i2c_send_bit(rw);
-
-     
+i2c_send_bit(rw);
       i2c_ack_slot_release();
-
-      i2c_stop();
+i2c_stop();
     end
   endtask
 
-  
   initial begin
-   
-    $dumpfile("i2c_address_translator_tb.vcd");
+   $dumpfile("i2c_address_translator_tb.vcd");
     $dumpvars(0, tb_i2c_address_translator);
-
-    
-    reset = 1;
+reset = 1;
     #(100);
     reset = 0;
-
-    
-    force dut.scl_driver = 1'b0;
+force dut.scl_driver = 1'b0;
     force dut.sda_driver = 1'b0;
-
-    
-    #(1000);
-
-   
-    $display("TB:Sending address 0x49 (expect translation) at time %0t", $time);
+#(1000);
+    $display("TB:Sending the address 0x49 (expect translation) at time %0t", $time);
     i2c_send_addr7_rw(7'h49, 1'b0); 
-
-    #(3000);
-
-    
-    $display("TB:Sending address 0x48 (no translation) at time %0t", $time);
+#(3000);
+$display("TB:Sending the address 0x48 (no translation) at time %0t", $time);
     i2c_send_addr7_rw(7'h48, 1'b1); 
-
-    #(5000);
-
-    
-    $display("TB:Sending address 0x1A (no translation) at time %0t", $time);
+#(5000);
+$display("TB:Sending address 0x1A (no translation) at time %0t", $time);
     i2c_send_addr7_rw(7'h1A, 1'b0);
-
     #(5000);
-
-   
-    $display("TB:Test is complete at time %0t", $time);
+ $display("TB:Test is complete at time %0t", $time);
     $finish;
   end
-
-endmodule
+    endmodule
 
 
     
